@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Electoral Los Guayos 2025 - Nexus Marketing</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+        #map { height: 100vh; width: 100%; background: #eef2f3; }
+
+        /* Estilo personalizado para el Popup */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+        }
+        .leaflet-popup-content h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 14px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 3px;
+        }
+        .leaflet-popup-content p {
+            margin: 3px 0;
+            font-size: 13px;
+            color: #555;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 5px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-weight: bold;
+            color: #2980b9;
+        }
+
+        /* Créditos de Nexus Marketing */
+        .nexus-credit {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-left: 5px solid #e74c3c;
+            max-width: 250px;
+        }
+        .nexus-credit h2 { margin: 0; font-size: 16px; color: #333; }
+        .nexus-credit p { margin: 5px 0 0 0; font-size: 12px; color: #666; }
+        .nexus-credit .contact { font-weight: bold; color: #27ae60; margin-top: 5px; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="nexus-credit">
+        <h2>Municipio Los Guayos</h2>
+        <p>Mapa de Centros de Votación (Proyección 2025)</p>
+        <span class="contact">Diseño: Nexus Marketing</span>
+        <span class="contact">WhatsApp: 0424-4525765</span>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 1. Configuración del Mapa
+        // Centrado en el promedio de tus coordenadas
+        var map = L.map('map').setView([10.155, -67.915], 13);
+
+        // 2. Capa Base (Estilo claro y limpio 'CartoDB Voyager')
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // 3. Base de Datos de Centros (Tu Data procesada)
+        const centrosVotacion = [
+            {lat: 10.17582273, lng: -67.93876326, nombre: "UNIDAD EDUCATIVA SANTISIMA TRINIDAD", info: "5 mesas y 4106 votantes"},
+            {lat: 10.18840028, lng: -67.93775610, nombre: "ESCUELA BASICA LICENCIADA ELISA GUEVARA DE CACERES", info: "3 mesas y 2751 votantes"},
+            {lat: 10.16353843, lng: -67.92732256, nombre: "JARDIN DE INFANCIA LAS AGUITAS", info: "4 mesas y 3079 votantes"},
+            {lat: 10.17300321, lng: -67.92346908, nombre: "INSTITUTO DE EDUCACION ESPECIAL LAS AGUITAS", info: "3 mesas 2411 votantes"},
+            {lat: 10.17026607, lng: -67.93051435, nombre: "LICEO NACIONAL BOLIVARIANO ANDRES BELLO", info: "6 mesas 5109 votantes"},
+            {lat: 10.17372458, lng: -67.93032729, nombre: "E.B.N. LAS AGUITAS I Y II JULIO GARMENDIA", info: "3 mesas y 2351 votantes"},
+            {lat: 10.18758100, lng: -67.93770326, nombre: "ANEXO RURAL 6", info: "4 mesas y 3062 votantes"},
+            {lat: 10.18775629, lng: -67.93962636, nombre: "MARIA FIDELA CHIRINOS", info: "2 mesas 1633 votantes"},
+            {lat: 10.18179363, lng: -67.93795482, nombre: "GRUPO ESCOLAR BATALLA DE AYACUCHO", info: "6 mesas y 5134 votantes"},
+            {lat: 10.17658373, lng: -67.93231285, nombre: "PRE-ESCOLAR BATALLA DE JUNIN", info: "6 mesas 5912 votantes"},
+            {lat: 10.15642914, lng: -67.91121757, nombre: "GRUPO ESCOLAR YORACO", info: "7 mesas y 6161 votantes"},
+            {lat: 10.11623263, lng: -67.89293778, nombre: "U.E. SIMON JOSE GUEDEZ ORTIZ", info: "2 mesas 10665 votantes"},
+            {lat: 10.13809854, lng: -67.89927120, nombre: "U.E. LICEO BOLIVARIANO LA GLORIETA", info: "1 mesa y 856 votantes"},
+            {lat: 10.10626986, lng: -67.89898139, nombre: "ESCUELA NACIONAL PIRITAL", info: "2 mesas y 1214 votos"},
+            {lat: 10.12010510, lng: -67.92210809, nombre: "JARDIN DE INFANCIA CABRIALES", info: "4 mesas y 3006 votantes"},
+            {lat: 10.16936349, lng: -67.90777085, nombre: "E.B.N.B. LOS CERRITOS", info: "5 mesas 4495 votantes"},
+            {lat: 10.10273061, lng: -67.90611509, nombre: "U.E. ESTADAL MARIA ESCAMILLO", info: "1 mesa 893 votantes"},
+            {lat: 10.17143589, lng: -67.92443324, nombre: "E.B.N.B. LAS AGUITAS III", info: "5 mesas 4381 votantes"},
+            {lat: 10.19276410, lng: -67.93257262, nombre: "UNIDAD BASICA RAMONA DE ROMERO", info: "3 mesas 2906 votantes"},
+            {lat: 10.16034137, lng: -67.89935852, nombre: "GRUPO ESCOLAR LOS HIJOS DE BOLIVAR", info: "3 mesas 2892 votantes"},
+            {lat: 10.16992284, lng: -67.90763180, nombre: "ESCUELA BOLIVARIANA LOS CERRITOS", info: "8 mesas 6933 votantes"},
+            {lat: 10.13534322, lng: -67.86886095, nombre: "U.E.B. RURAL LA DIOSA DE LOS TACARIGUAS", info: "1 mesa 755 votantes"},
+            {lat: 10.17934830, lng: -67.94041959, nombre: "U.E. ANTONIO JOSE DE SUCRE", info: "4 mesas y 3794 votantes"},
+            {lat: 10.16328418, lng: -67.90185788, nombre: "U.E. LUISA TERESA DE MONTEMAYOR", info: "4 mesas y 3238 votantes"},
+            {lat: 10.16632711, lng: -67.92017345, nombre: "ESCUELA BASICA ARTURO USLAR PIETRI", info: "3 mesas y 2320 votantes"},
+            {lat: 10.19089816, lng: -67.91675933, nombre: "PRE-ESCOLAR TACARIGUA I", info: "3 mesas y 2985 votantes"},
+            {lat: 10.16736417, lng: -67.92654609, nombre: "ESCUELA TECNOLOGICA RURAL FRANCISCO DE MIRANDA", info: "2 mesas y 1155 votantes"},
+            {lat: 10.19139831, lng: -67.93764334, nombre: "UNIDAD EDUCATIVA DIVINO NIÑO", info: "2 mesas y 1866 votantes"},
+            {lat: 10.16686521, lng: -67.91808436, nombre: "UNIDAD EDUCATIVA MANUELA SAENZ", info: "1 mesa y 993 votantes"},
+            {lat: 10.15669828, lng: -67.90803348, nombre: "JARDIN DE INFANCIA EL ROBLE", info: "3 mesas y 2117 votantes"},
+            {lat: 10.17438985, lng: -67.93102030, nombre: "ESCUELA DE ESPECIALIDADES FEMENINAS", info: "2 mesas y 1411 votantes"},
+            {lat: 10.18453270, lng: -67.93326067, nombre: "CENTRO EDUCACION INICIAL GUAPARO", info: "2 mesas y 1689 votantes"},
+            {lat: 10.10911423, lng: -67.92403439, nombre: "ESCUELA BOLIVARIANA NACIONAL LA UNION", info: "2 mesas y 1048 votantes"},
+            {lat: 10.17175085, lng: -67.92065388, nombre: "ESCUELA BASICA ESTADAL MIGUEL OTERO SILVA", info: "1 mesa y 815 votantes"},
+            {lat: 10.17811493, lng: -67.93635418, nombre: "UNIDAD EDUCATIVA VICENTE EMPARAN", info: "2 mesas 1349 votantes"},
+            {lat: 10.16440806, lng: -67.92468052, nombre: "MATERNAL PANCHITO MANDEFUA", info: "2 mesas y 1401 votantes"},
+            {lat: 10.17936477, lng: -67.90940662, nombre: "ESCUELA BASICA JUAN VICENTE GONZALEZ DELGADO", info: "2 mesas 1876 votantes"},
+            {lat: 10.18801352, lng: -67.93397279, nombre: "CENTRO EDUCACION INICIAL LIBERTADOR", info: "1 mesa y 869 votantes"},
+            {lat: 10.17358364, lng: -67.92323791, nombre: "ESCUELA DE NIÑOS ESPECIALES", info: "3 mesas y 2222 votantes"},
+            {lat: 10.15408739, lng: -67.90740000, nombre: "ESCUELA BASICA EL ROBLE", info: "1 mesa y 639 votantes"},
+            {lat: 10.16761002, lng: -67.90245191, nombre: "CENTRO DE VOTACION 23 DE ENERO", info: "2 mesas y 1223 votantes"},
+            {lat: 10.15170569, lng: -67.90905075, nombre: "CENTRO DE VOTACION 12 DE MARZO", info: "1 mesa y 580 votantes"},
+            {lat: 10.18120472, lng: -67.91641451, nombre: "BASE DE MISION SANTA ROSA- ALI PRIMERA", info: "1 mesa y 250 votantes"},
+            {lat: 10.17026611, lng: -67.93154597, nombre: "C.E.I. SIMONCITO ARAGUITA", info: "1 mesa y 351 votantes"},
+            {lat: 10.17666290, lng: -67.92452334, nombre: "PRE-ESCOLAR LA ALEGRIA", info: "1 mesa y 370 votantes"},
+            {lat: 10.18248855, lng: -67.91107779, nombre: "PRE-ESCOLAR ZAIDA CEDEÑO", info: "1 mesa y 457 votantes"}
+        ];
+
+        // 4. Límite Municipal (Aproximación para efecto visual)
+        // Dibuja una línea roja punteada alrededor de los puntos
+        var latlngs = [
+            [10.205, -67.950], // Noroeste
+            [10.210, -67.920], // Norte (hacia Guacara)
+            [10.190, -67.880], // Noreste
+            [10.135, -67.860], // Este (Tacarigua)
+            [10.090, -67.890], // Sureste (Lago/Pirital)
+            [10.095, -67.930], // Sur (hacia Carlos Arvelo)
+            [10.140, -67.945], // Suroeste (hacia Valencia)
+            [10.170, -67.955]  // Oeste
+        ];
+
+        var polygon = L.polygon(latlngs, {
+            color: 'red',
+            weight: 3,
+            fillColor: '#f03',
+            fillOpacity: 0.05,
+            dashArray: '10, 10' // EFECTO PUNTEADO SOLICITADO
+        }).addTo(map);
+
+
+        // 5. Generación de Marcadores
+        centrosVotacion.forEach(centro => {
+            // Creamos un marcador circular (más elegante que la chincheta)
+            var marker = L.circleMarker([centro.lat, centro.lng], {
+                radius: 8,
+                fillColor: "#007bff", // Azul electoral
+                color: "#fff",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map);
+
+            // Contenido del Popup
+            var popupContent = `
+                <h3>${centro.nombre}</h3>
+                <div class="stat-box">${centro.info}</div>
+            `;
+
+            marker.bindPopup(popupContent);
+            
+            // Efecto al pasar el mouse (Hover)
+            marker.on('mouseover', function (e) {
+                this.openPopup();
+            });
+        });
+
+        // Ajustar el mapa para que se vean todos los puntos automáticamente
+        var group = new L.featureGroup(centrosVotacion.map(c => L.marker([c.lat, c.lng])));
+        map.fitBounds(group.getBounds().pad(0.1));
+
+    </script>
+</body>
+</html>
