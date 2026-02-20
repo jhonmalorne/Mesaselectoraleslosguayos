@@ -19,7 +19,7 @@
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
         }
         body {
-            background: #1d4e2b;
+            background: #1b4c2b;
             height: 100vh;
             overflow: hidden;
         }
@@ -31,69 +31,70 @@
             left: 0;
             z-index: 1;
         }
-        /* Panel de identidad (escueto pero con los textos de las imágenes) */
-        .branding-panel {
+        /* Panel de identidad (compacto y semitransparente, no interfiere) */
+        .brand-panel {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 12px;
+            left: 12px;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(6px);
             border-radius: 40px 15px 40px 15px;
-            box-shadow: 0 8px 20px rgba(0, 30, 0, 0.5);
-            padding: 10px 20px 10px 15px;
+            box-shadow: 0 6px 16px rgba(0, 40, 0, 0.4);
+            padding: 6px 16px 6px 12px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 12px;
-            border-left: 5px solid #c53b2b;
-            border-right: 3px solid #f3b43c;
+            gap: 8px;
+            border-left: 5px solid #c5342a;
+            border-right: 3px solid #f0b84d;
             pointer-events: none;
+            max-width: 95%;
         }
-        .branding-panel * {
+        .brand-panel * {
             pointer-events: auto;
         }
         .escudo-simbolo {
             background: #002c47;
             color: white;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 10px;
             line-height: 1.2;
             text-align: center;
-            box-shadow: 0 3px 0 #ac822f;
-            border: 2px solid #e3b13c;
+            box-shadow: 0 3px 0 #aa8330;
+            border: 2px solid #e0ae3a;
         }
         .escudo-simbolo i {
-            font-size: 24px;
-            color: #ffd966;
+            font-size: 20px;
+            color: #fdda7a;
         }
         .text-logo {
             display: flex;
             flex-direction: column;
         }
         .text-logo .municipio {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            color: #0b4619;
-            letter-spacing: 0.5px;
+            color: #0c4019;
+            letter-spacing: 0.3px;
             line-height: 1.1;
         }
         .text-logo .municipio small {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             color: #aa3f2e;
-            font-weight: 400;
+            font-weight: 500;
         }
         .text-logo .gestion {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #1c5a2a, #3a2c16);
+            background: linear-gradient(145deg, #1e592a, #35270f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -101,24 +102,25 @@
             background: #001f33;
             color: white;
             border-radius: 30px;
-            padding: 6px 18px;
+            padding: 4px 14px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             box-shadow: inset 0 -2px 0 #dba43a;
+            white-space: nowrap;
         }
         .baldwyn i {
-            color: #f6c445;
+            color: #f5c452;
         }
         .fecha-union {
-            background: #f5e6c6;
+            background: #f2e3c2;
             border-radius: 30px;
-            padding: 5px 15px;
-            font-size: 0.85rem;
+            padding: 4px 12px;
+            font-size: 0.75rem;
             font-weight: 600;
-            color: #2c4b1e;
+            color: #28521c;
             white-space: nowrap;
         }
         .fecha-union i {
@@ -131,28 +133,29 @@
             bottom: 25px;
             right: 20px;
             z-index: 1000;
-            background: #1a3f2b;
+            background: #174027;
             color: white;
             border: none;
             border-radius: 60px;
-            padding: 14px 22px;
+            padding: 12px 22px;
             font-weight: bold;
-            font-size: 1.1rem;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+            font-size: 1rem;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.6);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
             border-bottom: 4px solid #d6a741;
             transition: 0.2s;
+            backdrop-filter: blur(2px);
         }
         .download-btn:hover {
-            background: #0f2e1d;
+            background: #0c2d1a;
             border-bottom-color: #b88b2c;
             transform: scale(1.02);
         }
         .download-btn i {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
         }
         /* Leyenda compacta */
         .legend-mini {
@@ -160,27 +163,33 @@
             bottom: 100px;
             right: 20px;
             z-index: 1000;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.75);
             color: white;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             backdrop-filter: blur(4px);
             border-left: 5px solid #e3b13c;
             pointer-events: none;
-            box-shadow: 0 4px 12px black;
+            box-shadow: 0 4px 10px black;
         }
         .legend-mini span {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 11px;
+            height: 11px;
             border-radius: 50%;
             margin-right: 4px;
         }
+        /* Ajustes para controles Leaflet */
         .leaflet-control-layers {
             border-radius: 20px !important;
             border: 2px solid #c49b3f !important;
             background: rgba(255,255,255,0.9) !important;
+        }
+        .leaflet-control-zoom {
+            border: 2px solid #b38830 !important;
+            border-radius: 30px !important;
+            overflow: hidden;
         }
         .leaflet-popup-content {
             min-width: 200px;
@@ -206,24 +215,26 @@
         .btn-google-maps:hover {
             background: #12452b;
         }
-        /* Responsive */
+        /* Responsive: ajustes para móvil */
         @media (max-width: 700px) {
-            .branding-panel { flex-wrap: wrap; max-width: 95%; padding: 8px; gap: 6px; }
-            .text-logo .municipio { font-size: 1.1rem; }
-            .baldwyn { padding: 4px 12px; font-size: 0.85rem; }
-            .fecha-union { padding: 3px 8px; font-size: 0.7rem; }
-            .download-btn { padding: 10px 16px; font-size: 0.9rem; }
+            .brand-panel { padding: 5px 10px; gap: 5px; }
+            .escudo-simbolo { width: 40px; height: 40px; font-size: 8px; }
+            .text-logo .municipio { font-size: 1rem; }
+            .baldwyn { padding: 3px 10px; font-size: 0.8rem; }
+            .fecha-union { padding: 3px 8px; font-size: 0.65rem; }
+            .download-btn { padding: 8px 16px; font-size: 0.9rem; bottom: 15px; right: 10px; }
+            .legend-mini { bottom: 85px; right: 10px; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
 
-    <!-- Panel de marca basado en las imágenes proporcionadas -->
-    <div class="branding-panel">
+    <!-- Panel de marca (basado en las imágenes proporcionadas) -->
+    <div class="brand-panel">
         <div class="escudo-simbolo">
             <i class="fas fa-crown"></i>
-            <span>1·3 JUN<br>2024-2026</span>
+            <span>1·3 JUN<br>2020-2021</span>
         </div>
         <div class="text-logo">
             <div class="municipio">LOS GUAYOS <small>Carabobo</small></div>
@@ -233,7 +244,7 @@
             <i class="fas fa-map-signal"></i> BALDWYN MUJICA
         </div>
         <div class="fecha-union">
-            <i class="fas fa-handshake"></i> ORDEN Y GESTIÓN
+            <i class="fas fa-handshake"></i> UNIÓN Y PROSPERIDAD
         </div>
     </div>
 
@@ -244,7 +255,7 @@
 
     <!-- Mini leyenda de colores -->
     <div class="legend-mini">
-        <b style="display:block; margin-bottom:5px;">🗂️ categorías</b>
+        <b style="display:block; margin-bottom:4px;">🗂️ categorías</b>
         <div><span style="background:#d42e2e;"></span> Votación 2024</div>
         <div><span style="background:#1f77b4;"></span> Deporte</div>
         <div><span style="background:#c9a03d;"></span> Salud</div>
@@ -260,11 +271,14 @@
             const map = L.map('map', { 
                 center: [10.155, -67.91], 
                 zoom: 13,
-                zoomControl: true,
+                zoomControl: false,   // lo añadiremos después en la posición que deseemos
                 attributionControl: true
             });
 
-            // Capas base: calles y satélite
+            // Añadir control de zoom en la esquina inferior izquierda para liberar arriba
+            L.control.zoom({ position: 'bottomleft' }).addTo(map);
+
+            // Capas base
             const capaCalles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; CartoDB'
             });
@@ -275,12 +289,12 @@
 
             capaCalles.addTo(map);  // por defecto
 
-            // Control de capas base
+            // Control de capas base en la esquina superior derecha (para no interferir con el logo)
             const baseMaps = {
                 "🗺️ Vista calle": capaCalles,
                 "🛰️ Satélite": capaSatelite
             };
-            L.control.layers(baseMaps, null, { position: 'topleft' }).addTo(map);
+            L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
             // ---------- FUNCIÓN PARA BOTÓN "VER EN GOOGLE MAPS" ----------
             window.abrirGoogleMaps = function(lat, lng) {
@@ -288,7 +302,7 @@
                 window.open(url, '_blank');
             };
 
-            // ---------- CARGAR TODOS LOS DATOS (procesados) ----------
+            // ---------- DATOS COMPLETOS (corregidos y aumentados) ----------
 
             // 1. CENTROS DE VOTACIÓN 2024 (con info de mesas)
             const centrosVotacion = [
@@ -360,12 +374,12 @@
                 {lat:10.176208470055267, lng:-67.89789014841733, nombre:"Cancha Buena ventura"}
             ];
 
-            // 3. SALUD
+            // 3. SALUD (incluye los nuevos puntos)
             const salud = [
-                {lat:10.18457848183504, -67.91604647927187, nombre:"Seguro Social de Paraparal"}
-                {lat:10.185938587050927, -67.91953485477745, nombre:"CDI Paraparal"}
-                {lat:10.188943689752515, -67.93663465594301, nombre:"AMBULATORIO LOS GUAYOS"}
-                {lat:10.179984848223391, -67.93996722683744, nombre:"Centro Pediátrico Los Guayos"}
+                {lat:10.184735716198, lng:-67.9160520532341, nombre:"Seguro Social de Paraparal"},
+                {lat:10.185938587050927, lng:-67.91953485477745, nombre:"CDI Paraparal"},
+                {lat:10.188943689752515, lng:-67.93663465594301, nombre:"AMBULATORIO LOS GUAYOS"},
+                {lat:10.179984848223391, lng:-67.93996722683744, nombre:"Centro Pediátrico Los Guayos"}
             ];
 
             // 4. AGRICULTURA
@@ -374,7 +388,7 @@
                 {lat:10.101586292193456, lng:-67.91452716791642, nombre:"Zona de cultivo la Union"},
                 {lat:10.099774362163824, lng:-67.88998776353333, nombre:"Zona de cultivo Pirital"},
                 {lat:10.104746401899796, lng:-67.89400535571667, nombre:"Hacienda familia Bericoto"},
-                {lat:10.108969735386202, lng:-67.88670164572545, nombre:"Zona de cultivo orilla lago pirital"},
+                {lat:10.108969735385202, lng:-67.88670164572545, nombre:"Zona de cultivo orilla lago pirital"},
                 {lat:10.136491265248768, lng:-67.91573137211373, nombre:"GP GRANJA PORCINA"},
                 {lat:10.132614601141881, lng:-67.8810274687416, nombre:"Finca La Vegareña"},
                 {lat:10.142299119004067, lng:-67.88037754409099, nombre:"Zona de cultivo la culebra"},
@@ -383,7 +397,7 @@
                 {lat:10.158275692090216, lng:-67.89498081513577, nombre:"Hacienda Delgado"}
             ];
 
-            // 5. INSTITUCIONES EDUCATIVAS (corregidas: lng negativas)
+            // 5. INSTITUCIONES EDUCATIVAS (corregidas: todas con longitud negativa)
             const educativas = [
                 {lat:10.17582273, lng:-67.93876326, nombre:"UNIDAD EDUCATIVA SANTISIMA TRINIDAD"},
                 {lat:10.18840028, lng:-67.93775610, nombre:"ESCUELA BASICA LICENCIADA ELISA GUEVARA DE CACERES"},
@@ -542,7 +556,7 @@
             grupoEducacion.addTo(map);
             grupoTurismo.addTo(map);
 
-            // Capas superpuestas para control (opcional, pero permitimos ocultar)
+            // Control de capas superpuestas (para ocultar/mostrar categorías)
             const overlays = {
                 "🗳️ Votación 2024": grupoVotacion,
                 "⚽ Deporte": grupoDeporte,
@@ -552,12 +566,11 @@
                 "🏞️ Turismo": grupoTurismo,
                 "🚩 Límite municipal": limitePoly
             };
-            L.control.layers(null, overlays, { collapsed: true }).addTo(map);
+            L.control.layers(null, overlays, { collapsed: true, position: 'topright' }).addTo(map);
 
             // ---------- FUNCIÓN DE DESCARGA DEL MAPA CON MARCA DE AGUA ----------
             document.getElementById('downloadMapBtn').addEventListener('click', function() {
                 const mapContainer = document.getElementById('map');
-                // Usar html2canvas para capturar el contenedor del mapa
                 html2canvas(mapContainer, {
                     scale: 1.5,
                     backgroundColor: '#ffffff',
@@ -565,16 +578,14 @@
                     useCORS: true,
                     logging: false
                 }).then(canvas => {
-                    // Crear un canvas para añadir la marca de agua
                     const watermarkedCanvas = document.createElement('canvas');
                     watermarkedCanvas.width = canvas.width;
                     watermarkedCanvas.height = canvas.height;
                     const ctx = watermarkedCanvas.getContext('2d');
                     
-                    // Dibujar la imagen original del mapa
                     ctx.drawImage(canvas, 0, 0);
                     
-                    // Configurar marca de agua (texto semitransparente)
+                    // Marca de agua estratégica
                     ctx.font = 'bold 28px "Segoe UI", Roboto, sans-serif';
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
                     ctx.shadowColor = 'black';
@@ -589,7 +600,7 @@
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
                     ctx.fillText('@balwynmujica', canvas.width - 300, canvas.height - 60);
                     
-                    // Dibujar un pequeño escudo simbólico (opcional)
+                    // Escudo simbólico
                     ctx.beginPath();
                     ctx.arc(120, canvas.height - 80, 30, 0, 2 * Math.PI);
                     ctx.fillStyle = '#002c47';
@@ -599,7 +610,6 @@
                     ctx.font = 'bold 20px "Segoe UI"';
                     ctx.fillText('1·3', 95, canvas.height - 75);
                     
-                    // Descargar
                     const link = document.createElement('a');
                     link.download = 'Mapa_LosGuayos_OrdenGestion.png';
                     link.href = watermarkedCanvas.toDataURL('image/png');
