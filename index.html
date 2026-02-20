@@ -7,7 +7,7 @@
     <!-- Leaflet 1.9.4 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Font Awesome 6 (iconos) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- html2canvas para capturar el mapa -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -19,7 +19,7 @@
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
         }
         body {
-            background: #1b4c2b;
+            background: #1d4e2b;
             height: 100vh;
             overflow: hidden;
         }
@@ -230,11 +230,11 @@
 <body>
     <div id="map"></div>
 
-    <!-- Panel de marca (basado en las imágenes proporcionadas) -->
+    <!-- Panel de marca basado en las imágenes proporcionadas -->
     <div class="brand-panel">
         <div class="escudo-simbolo">
             <i class="fas fa-crown"></i>
-            <span>1·3 JUN<br>2024-2026</span>
+            <span>1·3 JUN<br>2020-2021</span>
         </div>
         <div class="text-logo">
             <div class="municipio">LOS GUAYOS <small>Carabobo</small></div>
@@ -244,7 +244,7 @@
             <i class="fas fa-map-signal"></i> BALDWYN MUJICA
         </div>
         <div class="fecha-union">
-            <i class="fas fa-handshake"></i> ORDEN Y GESTIÓN
+            <i class="fas fa-handshake"></i> UNIÓN Y PROSPERIDAD
         </div>
     </div>
 
@@ -271,7 +271,7 @@
             const map = L.map('map', { 
                 center: [10.155, -67.91], 
                 zoom: 13,
-                zoomControl: false,   // lo añadiremos después en la posición que deseemos
+                zoomControl: false,
                 attributionControl: true
             });
 
@@ -351,10 +351,10 @@
                 {lat: 10.18120472, lng: -67.91641451, nombre: "BASE DE MISION SANTA ROSA- ALI PRIMERA", info: "1 mesa y 250 votantes"},
                 {lat: 10.17026611, lng: -67.93154597, nombre: "C.E.I. SIMONCITO ARAGUITA", info: "1 mesa y 351 votantes"},
                 {lat: 10.17666290, lng: -67.92452334, nombre: "PRE-ESCOLAR LA ALEGRIA", info: "1 mesa y 370 votantes"},
-                {lat: 10.18248855, lng: -67.91107779, nombre: "PRE-ESCOLAR ZAIDA CEDEÑO", info: "1 mesa y 457 votantes"}
+                {lat: 10.18248855, lng: -67.91107779, nombre: "PRE-ESCOLAR ZAIDA CEDEÑO", info: "1 mesa y 457 votantes"}  // longitud corregida
             ];
 
-            // 2. DEPORTE
+            // 2. DEPORTE (incluye los nuevos puntos)
             const deporte = [
                 {lat:10.106494525210145, lng:-67.92012630646292, nombre:"Campo deportivo argimiro gabardon"},
                 {lat:10.105860565095638, lng:-67.92214717347639, nombre:"Cancha deportivo La unión"},
@@ -372,9 +372,9 @@
                 {lat:10.162043589488297, lng:-67.92822928883692, nombre:"Cancha Romulo Gallegos"},
                 {lat:10.176251220383968, lng:-67.89773916501133, nombre:"Academia de Taekwondo Lum Fatt"},
                 {lat:10.176208470055267, lng:-67.89789014841733, nombre:"Cancha Buena ventura"},
-                {lat:10.168796340066066, -67.91076254632844, nombre:"Campo de Béisbol Menor Los Cerritos"},
-                {lat:10.169499010684737, -67.90846169375328, nombre:"Cancha de Fútbol Los Cerritos"},
-                {lat:10.169439990818963, -67.90892383894932, nombre:"Cancha Bascket Paraparal"},
+                {lat:10.168796340066066, lng:-67.91076254632844, nombre:"Campo de Béisbol Menor Los Cerritos"},
+                {lat:10.169499010684737, lng:-67.90846169375328, nombre:"Cancha de Fútbol Los Cerritos"},
+                {lat:10.169439990818963, lng:-67.90892383894932, nombre:"Cancha Bascket Paraparal"}
             ];
 
             // 3. SALUD (incluye los nuevos puntos)
@@ -391,7 +391,7 @@
                 {lat:10.101586292193456, lng:-67.91452716791642, nombre:"Zona de cultivo la Union"},
                 {lat:10.099774362163824, lng:-67.88998776353333, nombre:"Zona de cultivo Pirital"},
                 {lat:10.104746401899796, lng:-67.89400535571667, nombre:"Hacienda familia Bericoto"},
-                {lat:10.108969735385202, lng:-67.88670164572545, nombre:"Zona de cultivo orilla lago pirital"},
+                {lat:10.108969735386202, lng:-67.88670164572545, nombre:"Zona de cultivo orilla lago pirital"},
                 {lat:10.136491265248768, lng:-67.91573137211373, nombre:"GP GRANJA PORCINA"},
                 {lat:10.132614601141881, lng:-67.8810274687416, nombre:"Finca La Vegareña"},
                 {lat:10.142299119004067, lng:-67.88037754409099, nombre:"Zona de cultivo la culebra"},
