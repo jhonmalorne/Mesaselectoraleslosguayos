@@ -3,337 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Los Guayos Digital - Orden Y Gestion</title>
-    
+    <title>Los Guayos · Orden y Gestión · Mapa Estratégico</title>
+    <!-- Leaflet CSS + JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Font Awesome (para iconos de apoyo visual) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
-        #map { height: 100vh; width: 100%; background: #eef2f3; }
-
-        /* Estilo personalizado para el Popup */
-        .leaflet-popup-content-wrapper {
-            border-radius: 8px;
-            box-shadow: 0 3px 14px rgba(0,0,0,0.4);
-        }
-        .leaflet-popup-content h3 {
-            margin: 0 0 5px 0;
-            color: #2c3e50;
-            font-size: 14px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 3px;
-        }
-        .leaflet-popup-content p {
-            margin: 3px 0;
-            font-size: 13px;
-            color: #555;
-        }
-        .stat-box {
-            background: #f8f9fa;
-            padding: 5px;
-            border-radius: 4px;
-            margin-top: 5px;
-            font-weight: bold;
-            color: #2980b9;
-        }
-
-        /* Créditos de Nexus Marketing */
-        .nexus-credit {
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+        body { background: #2b5a3a; }
+        #map {
+            height: 100vh;
+            width: 100vw;
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-left: 5px solid #e74c3c;
-            max-width: 250px;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
-        .nexus-credit h2 { margin: 0; font-size: 16px; color: #333; }
-        .nexus-credit p { margin: 5px 0 0 0; font-size: 12px; color: #666; }
-        .nexus-credit .contact { font-weight: bold; color: #27ae60; margin-top: 5px; display: block; }
+        /* Panel de identidad / logos (estilo flotante, semi-transparente) */
+        .brand-panel {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            border-radius: 20px 10px 20px 10px;
+            box-shadow: 0 10px 25px rgba(0, 20, 0, 0.5);
+            padding: 12px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            border-left: 6px solid #cf3a3a;
+            border-right: 2px solid #f7c35c;
+            max-width: 95%;
+            pointer-events: none; /* para que no bloquee clicks en el mapa */
+        }
+        .brand-panel * {
+            pointer-events: auto; /* los elementos internos sí pueden recibir clicks */
+        }
+        .escudo-simbolo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #003b5c;
+            color: white;
+            padding: 8px 10px;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border: 2px solid #f3c96b;
+        }
+        .escudo-simbolo i {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 2px black);
+        }
+        .escudo-simbolo span {
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .text-logo {
+            display: flex;
+            flex-direction: column;
+            font-weight: 600;
+        }
+        .text-logo .municipio {
+            font-size: 1.3rem;
+            color: #0b4b2b;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        .text-logo .municipio small {
+            font-size: 0.8rem;
+            color: #a0342a;
+            font-weight: 400;
+        }
+        .text-logo .gestion {
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #1e4d2b, #3d2f1b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .baldwyn {
+            background: #002b44;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: inset 0 -2px 0 #e3a832;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .baldwyn i {
+            color: #f3c96b;
+        }
+        .fecha-union {
+            font-size: 0.75rem;
+            color: #2c3e50;
+            background: #f9f1d2;
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .fecha-union i {
+            color: #b8860b;
+            margin-right: 4px;
+        }
+        /* botón flotante de leyenda (opcional, la capa control ya muestra colores) */
+        .info-legend {
+            position: absolute;
+            bottom: 30px;
+            right: 15px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 14px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px black;
+            font-size: 0.8rem;
+            border-left: 5px solid #008000;
+            pointer-events: none;
+        }
+        .info-legend b {
+            display: block;
+            margin-bottom: 4px;
+            color: #003300;
+        }
+        .info-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .leaflet-popup-content {
+            min-width: 200px;
+            font-size: 0.9rem;
+        }
+        .btn-ubicacion {
+            background: #1a5a3a;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.2s;
+            border-bottom: 3px solid #e1b13c;
+            font-size: 0.85rem;
+        }
+        .btn-ubicacion:hover {
+            background: #0d3d24;
+            border-bottom-color: #cf9f2e;
+        }
+        .leaflet-control-layers {
+            border-radius: 12px !important;
+            border: 2px solid #c9a441 !important;
+        }
     </style>
 </head>
 <body>
-
-    <div class="nexus-credit">
-        <h2>Municipio Los Guayos</h2>
-        <p>Mapa de Centros de Votación (Proyección 2026)</p>
-        <span class="contact">Diseño: Nexus Marketing</span>
-        <span class="contact">WhatsApp: 0424-4525765</span>
-    </div>
-
     <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Panel de marca con escudo y logos (versión textual, imita las imágenes proporcionadas) -->
+    <div class="brand-panel">
+        <div class="escudo-simbolo">
+            <i class="fas fa-chess-queen"></i>
+            <span>1·3 JUN<br>2020-2021</span>
+        </div>
+        <div class="text-logo">
+            <div class="municipio">LOS GUAYOS <small>Carabobo</small></div>
+            <div class="gestion"><i class="fas fa-leaf" style="color:#2e7d32;"></i> ORDEN Y GESTIÓN</div>
+        </div>
+        <div class="baldwyn">
+            <i class="fas fa-eagle"></i> BALDWYN MUJICA
+        </div>
+        <div class="fecha-union">
+            <i class="fas fa-handshake"></i> UNIÓN Y PROSPERIDAD
+        </div>
+    </div>
+
+    <!-- mini leyenda de colores (apoyo visual) -->
+    <div class="info-legend">
+        <b><i class="fas fa-map-pin"></i> categorías</b>
+        <div><span style="background:#d42e2e;"></span> Votación 2024</div>
+        <div><span style="background:#1f77b4;"></span> Deporte</div>
+        <div><span style="background:#c9a03d;"></span> Salud</div>
+        <div><span style="background:#2e8b57;"></span> Agricultura</div>
+        <div><span style="background:#9467bd;"></span> Educativas</div>
+        <div><span style="background:#ff8c42;"></span> Turismo</div>
+        <div><span style="background:black; border-radius:0; width:14px; height:2px;"></span> límite municipal</div>
+    </div>
 
     <script>
-        // 1. Configuración del Mapa
-        // Centrado en el promedio de tus coordenadas
-        var map = L.map('map').setView([10.155, -67.915], 13);
+        (function() {
+            // ---- INICIO configuración del mapa ----
+            const map = L.map('map').setView([10.155, -67.91], 13); // centro aproximado
 
-        // 2. Capa Base (Estilo claro y limpio 'CartoDB Voyager')
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap &copy; CARTO',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(map);
-
-        // 3. Base de Datos de Centros (Tu Data procesada)
-        const centrosVotacion = [
-            {lat: 10.17582273, lng: -67.93876326, nombre: "UNIDAD EDUCATIVA SANTISIMA TRINIDAD", info: "5 mesas y 4106 votantes"},
-            {lat: 10.18840028, lng: -67.93775610, nombre: "ESCUELA BASICA LICENCIADA ELISA GUEVARA DE CACERES", info: "3 mesas y 2751 votantes"},
-            {lat: 10.16353843, lng: -67.92732256, nombre: "JARDIN DE INFANCIA LAS AGUITAS", info: "4 mesas y 3079 votantes"},
-            {lat: 10.17300321, lng: -67.92346908, nombre: "INSTITUTO DE EDUCACION ESPECIAL LAS AGUITAS", info: "3 mesas 2411 votantes"},
-            {lat: 10.17026607, lng: -67.93051435, nombre: "LICEO NACIONAL BOLIVARIANO ANDRES BELLO", info: "6 mesas 5109 votantes"},
-            {lat: 10.17372458, lng: -67.93032729, nombre: "E.B.N. LAS AGUITAS I Y II JULIO GARMENDIA", info: "3 mesas y 2351 votantes"},
-            {lat: 10.18758100, lng: -67.93770326, nombre: "ANEXO RURAL 6", info: "4 mesas y 3062 votantes"},
-            {lat: 10.18775629, lng: -67.93962636, nombre: "MARIA FIDELA CHIRINOS", info: "2 mesas 1633 votantes"},
-            {lat: 10.18179363, lng: -67.93795482, nombre: "GRUPO ESCOLAR BATALLA DE AYACUCHO", info: "6 mesas y 5134 votantes"},
-            {lat: 10.17658373, lng: -67.93231285, nombre: "PRE-ESCOLAR BATALLA DE JUNIN", info: "6 mesas 5912 votantes"},
-            {lat: 10.15642914, lng: -67.91121757, nombre: "GRUPO ESCOLAR YORACO", info: "7 mesas y 6161 votantes"},
-            {lat: 10.11623263, lng: -67.89293778, nombre: "U.E. SIMON JOSE GUEDEZ ORTIZ", info: "2 mesas 10665 votantes"},
-            {lat: 10.13809854, lng: -67.89927120, nombre: "U.E. LICEO BOLIVARIANO LA GLORIETA", info: "1 mesa y 856 votantes"},
-            {lat: 10.10626986, lng: -67.89898139, nombre: "ESCUELA NACIONAL PIRITAL", info: "2 mesas y 1214 votos"},
-            {lat: 10.12010510, lng: -67.92210809, nombre: "JARDIN DE INFANCIA CABRIALES", info: "4 mesas y 3006 votantes"},
-            {lat: 10.16936349, lng: -67.90777085, nombre: "E.B.N.B. LOS CERRITOS", info: "5 mesas 4495 votantes"},
-            {lat: 10.10273061, lng: -67.90611509, nombre: "U.E. ESTADAL MARIA ESCAMILLO", info: "1 mesa 893 votantes"},
-            {lat: 10.17143589, lng: -67.92443324, nombre: "E.B.N.B. LAS AGUITAS III", info: "5 mesas 4381 votantes"},
-            {lat: 10.19276410, lng: -67.93257262, nombre: "UNIDAD BASICA RAMONA DE ROMERO", info: "3 mesas 2906 votantes"},
-            {lat: 10.16034137, lng: -67.89935852, nombre: "GRUPO ESCOLAR LOS HIJOS DE BOLIVAR", info: "3 mesas 2892 votantes"},
-            {lat: 10.16992284, lng: -67.90763180, nombre: "ESCUELA BOLIVARIANA LOS CERRITOS", info: "8 mesas 6933 votantes"},
-            {lat: 10.13534322, lng: -67.86886095, nombre: "U.E.B. RURAL LA DIOSA DE LOS TACARIGUAS", info: "1 mesa 755 votantes"},
-            {lat: 10.17934830, lng: -67.94041959, nombre: "U.E. ANTONIO JOSE DE SUCRE", info: "4 mesas y 3794 votantes"},
-            {lat: 10.16328418, lng: -67.90185788, nombre: "U.E. LUISA TERESA DE MONTEMAYOR", info: "4 mesas y 3238 votantes"},
-            {lat: 10.16632711, lng: -67.92017345, nombre: "ESCUELA BASICA ARTURO USLAR PIETRI", info: "3 mesas y 2320 votantes"},
-            {lat: 10.19089816, lng: -67.91675933, nombre: "PRE-ESCOLAR TACARIGUA I", info: "3 mesas y 2985 votantes"},
-            {lat: 10.16736417, lng: -67.92654609, nombre: "ESCUELA TECNOLOGICA RURAL FRANCISCO DE MIRANDA", info: "2 mesas y 1155 votantes"},
-            {lat: 10.19139831, lng: -67.93764334, nombre: "UNIDAD EDUCATIVA DIVINO NIÑO", info: "2 mesas y 1866 votantes"},
-            {lat: 10.16686521, lng: -67.91808436, nombre: "UNIDAD EDUCATIVA MANUELA SAENZ", info: "1 mesa y 993 votantes"},
-            {lat: 10.15669828, lng: -67.90803348, nombre: "JARDIN DE INFANCIA EL ROBLE", info: "3 mesas y 2117 votantes"},
-            {lat: 10.17438985, lng: -67.93102030, nombre: "ESCUELA DE ESPECIALIDADES FEMENINAS", info: "2 mesas y 1411 votantes"},
-            {lat: 10.18453270, lng: -67.93326067, nombre: "CENTRO EDUCACION INICIAL GUAPARO", info: "2 mesas y 1689 votantes"},
-            {lat: 10.10911423, lng: -67.92403439, nombre: "ESCUELA BOLIVARIANA NACIONAL LA UNION", info: "2 mesas y 1048 votantes"},
-            {lat: 10.17175085, lng: -67.92065388, nombre: "ESCUELA BASICA ESTADAL MIGUEL OTERO SILVA", info: "1 mesa y 815 votantes"},
-            {lat: 10.17811493, lng: -67.93635418, nombre: "UNIDAD EDUCATIVA VICENTE EMPARAN", info: "2 mesas 1349 votantes"},
-            {lat: 10.16440806, lng: -67.92468052, nombre: "MATERNAL PANCHITO MANDEFUA", info: "2 mesas y 1401 votantes"},
-            {lat: 10.17936477, lng: -67.90940662, nombre: "ESCUELA BASICA JUAN VICENTE GONZALEZ DELGADO", info: "2 mesas 1876 votantes"},
-            {lat: 10.18801352, lng: -67.93397279, nombre: "CENTRO EDUCACION INICIAL LIBERTADOR", info: "1 mesa y 869 votantes"},
-            {lat: 10.17358364, lng: -67.92323791, nombre: "ESCUELA DE NIÑOS ESPECIALES", info: "3 mesas y 2222 votantes"},
-            {lat: 10.15408739, lng: -67.90740000, nombre: "ESCUELA BASICA EL ROBLE", info: "1 mesa y 639 votantes"},
-            {lat: 10.16761002, lng: -67.90245191, nombre: "CENTRO DE VOTACION 23 DE ENERO", info: "2 mesas y 1223 votantes"},
-            {lat: 10.15170569, lng: -67.90905075, nombre: "CENTRO DE VOTACION 12 DE MARZO", info: "1 mesa y 580 votantes"},
-            {lat: 10.18120472, lng: -67.91641451, nombre: "BASE DE MISION SANTA ROSA- ALI PRIMERA", info: "1 mesa y 250 votantes"},
-            {lat: 10.17026611, lng: -67.93154597, nombre: "C.E.I. SIMONCITO ARAGUITA", info: "1 mesa y 351 votantes"},
-            {lat: 10.17666290, lng: -67.92452334, nombre: "PRE-ESCOLAR LA ALEGRIA", info: "1 mesa y 370 votantes"},
-            {lat: 10.18248855, lng: -67.91107779, nombre: "PRE-ESCOLAR ZAIDA CEDEÑO", info: "1 mesa y 457 votantes"}
-        ];
-
-        // 4. Límite Municipal (Aproximación para efecto visual)
-        // Dibuja una línea roja punteada alrededor de los puntos
-        var latlngs = [
-            [10.209083747610128, -67.91127684975459], // Norte (hacia Guacara)
-            [10.206527525312698, -67.91100137490947], // Norte (hacia Guacara)
-            [10.212586321145846, -67.91235077093202], // Norte (hacia Guacara)
-            [10.210432307328059, -67.91432487671563], // Norte (hacia Guacara)
-            [10.207560266215832, -67.91848766499842], // Norte (hacia Guacara)
-            [10.206926724180223, -67.91870224200103], 
-            [10.203716758811204, -67.92265045356822], 
-            [10.200760182980076, -67.92685615735161], 
-            [10.196620930842732, -67.93252098276312], 
-            [10.193664289241944, -67.93758499332628],
-            [10.190876573404372, -67.94230568122039],
-            [10.18694838706836, -67.95088875010374],
-            [10.186145848429986, -67.95526611510215],
-            [10.185089873460145, -67.95462238495533],
-            [10.181626251018136, -67.95402157015162],
-            [10.182133124944214, -67.94915067870731],
-            [10.17997890518864, -67.9470263691435],
-            [10.175923863770995, -67.94359314155811],
-            [10.170474820764458, -67.94067489813597],
-            [10.169228708681796, -67.93762790864201],
-            [10.167391212594463, -67.9358898372456],
-            [10.166271813215332, -67.93073999596662],
-            [10.163821793308857, -67.92898046684334],
-            [10.160484667153899, -67.92925941657364],
-            [10.160146728385515, -67.92923795890208],
-            [10.159660940780196, -67.92934524725989],
-            [10.159301879821893, -67.9291735858807],
-            [10.158668241994162, -67.9293452472532],
-            [10.15769666155296, -67.92898046683666],
-            [10.151465803720669, -67.92438852504281],
-            [10.150367470336896, -67.92419540595968],
-            [10.149670449190307, -67.9238520832147],
-            [10.147283668311443, -67.92357313348441], 
-            [10.146671128756063, -67.92290794566601], 
-            [10.145319313110654, -67.92307960702512], 
-            [10.144453303255602, -67.92194235043239], 
-            [10.144242080984439, -67.92119133192776], 
-            [10.143228212143553, -67.92022573670754], 
-            [10.14240444125379, -67.91996824455279], 
-            [10.139743013431438, -67.91664230546085], 
-            [10.138813620729131, -67.9161273213434], 
-            [10.13756738526857, -67.91589128687696], 
-            [10.137018195268585, -67.91623460962194], 
-            [10.136659108990484, -67.91632044030818], 
-            [10.135117145693535, -67.91769373128807], 
-            [10.134652442971223, -67.91780101964588], 
-            [10.132709133378766, -67.91870224185143], 
-            [10.132624641390136, -67.91913139528265],
-            [10.131821966387527, -67.91975366775792], 
-            [10.131674104983656, -67.92037594023317], 
-            [10.130871427495572, -67.92046177093673], 
-            [10.129329436360663, -67.92029010956423], 
-            [10.124154206364205, -67.92501079743494], 
-            [10.11847191893599, -67.92456018634948], 
-            [10.112831779474227, -67.92466747473576], 
-            [10.111141830808938, -67.92507517049542], 
-            [10.110423599825694, -67.92509662812846], 
-            [10.10894488414669, -67.9245172709963], 
-            [10.097727547870177, -67.92438852497811], 
-            [10.097009286944402, -67.92245733442823], 
-            [10.098234554471412, -67.91996824452718], 
-            [10.096713532014665, -67.91318762031396], 
-            [10.094791118315447, -67.91084873397705], 
-            [10.089594206205353, -67.90833818630618], 
-            [10.089742086976688, -67.89898264136218], 
-            [10.091854662016654, -67.89430486880227], 
-            [10.092425054892002, -67.89147245615622], 
-            [10.094875620219776, -67.88831817831453], 
-            [10.097748673066574, -67.87486421798185], 
-            [10.10093857666085, -67.87055122588646], 
-            [10.101530078479591, -67.87359821524811], 
-            [10.102882078551435, -67.87387716497838], 
-            [10.10478331903489, -67.87439214909585], 
-            [10.106388802386748, -67.876666662403], 
-            [10.10607193133602, -67.87743913857919], 
-            [10.106050806588208, -67.87840473379941], 
-            [10.106536675436853, -67.87941324436278], 
-            [10.110803839859535, -67.88147318083261], 
-            [10.112578287678204, -67.88288938716065], 
-            [10.114268228786853, -67.88325416757718], 
-            [10.115049823542561, -67.88381206703777], 
-            [10.11545118227256, -67.88473474691487], 
-            [10.125780716179223, -67.88821088978649], 
-            [10.126477789295363, -67.8873954982672], 
-            [10.132286673090952, -67.88692342950569], 
-            [10.138095451677966, -67.88754570198432], 
-            [10.13970076825058, -67.88688051416592], 
-            [10.13985622340783, -67.88271114431488], 
-            [10.136556941958062, -67.88109172405622], 
-            [10.135187977221667, -67.88153632702556], 
-            [10.13501430119527, -67.88147661456705], 
-            [10.13489482509524, -67.88151751825346], 
-            [10.134475668250063, -67.88148600229877], 
-            [10.133854304338376, -67.88210072417085], 
-            [10.133801741690949, -67.88160391249434], 
-            [10.131170911786635, -67.8818330992092], 
-            [10.131747434419093, -67.87876426750812], 
-            [10.132765955206978, -67.87623423828646], 
-            [10.13395742826141, -67.87499655424858], 
-            [10.135590892207327, -67.86487253304712], 
-            [10.136159720043874, -67.86420879080516], 
-            [10.137404988266423, -67.86483348935755], 
-            [10.137454952644715, -67.86627810481001], 
-            [10.137720147984668, -67.86725810066623], 
-            [10.138304345647471, -67.86896821301113], 
-            [10.139522701820036, -67.8704401590044], 
-            [10.140160703533864, -67.87332158113867], 
-            [10.140268318168603, -67.87343871215144], 
-            [10.143085502293122, -67.87496531925564], 
-            [10.143669690197513, -67.87573838375748], 
-            [10.143654316850242, -67.87734698257864], 
-            [10.144061710414604, -67.87952171447971], 
-            [10.14383495368455, -67.88052513653172], 
-            [10.143856984035997, -67.87997343025863], 
-            [10.143907335104931, -67.880665384548], 
-            [10.14393530791991, -67.88112858188158], 
-            [10.143627606846776, -67.88147100690347], 
-            [10.143321304121313, -67.88200950932371], 
-            [10.14217581325373, -67.88268299256256], 
-            [10.140124762287636, -67.88276875290505], 
-            [10.139941799982186, -67.88601632895606], 
-            [10.140447440976354, -67.88633398987885], 
-            [10.141032919011279, -67.88629681679275], 
-            [10.141575150555067, -67.88667530639668], 
-            [10.143774006538564, -67.88590818905898], 
-            [10.147757375760186, -67.88435834118235], 
-            [10.147727437197162, -67.88382102111963], 
-            [10.148525797945956, -67.88377708926997], 
-            [10.149270932845052, -67.88285452083325], 
-            [10.151813569927725, -67.88357091692073], 
-            [10.152927933689867, -67.88373650612702], 
-            [10.15302772728089, -67.88440224234823], 
-            [10.153400289695341, -67.88541267441585], 
-            [10.155159975984638, -67.88469286828602], 
-            [10.156094701438466, -67.88471990325873], 
-            [10.156304265840756, -67.88494970051825], 
-            [10.158030672146317, -67.88489563057949], 
-            [10.15830343686954, -67.8846387983437], 
-            [10.159866839760781, -67.886848907362], 
-            [10.161224000329616, -67.88816686225584], 
-            [10.163213161541732, -67.88910632752992], 
-            [10.164836414323368, -67.889471299648], 
-            [10.170477818974122, -67.89291825861989], 
-            [10.173245264086605, -67.89405372748949], 
-            [10.176252172433573, -67.89435787091384], 
-            [10.17880003943691, -67.89397262255865], 
-            [10.18149423698287, -67.89389151763402], 
-            [10.183290356039556, -67.89322916081724], 
-            [10.185126378399106, -67.89331026576653], 
-            [10.186097603347065, -67.89839959933771], 
-            [10.18794691389124, -67.89951479191633], 
-            [10.191445939711665, -67.90015687249334], 
-            [10.197173349670685, -67.90369845386108], 
-            [10.198596871149675, -67.90715893034303],
-            [10.201058084848738, -67.90638167489952],
-            [10.20519554172376, -67.90938931555779],
-            [10.206505946931202, -67.91099789644403],
-            [10.209238540893097, -67.91129658143669],
-        ];
-
-        var polygon = L.polygon(latlngs, {
-            color: 'red',
-            weight: 3,
-            fillColor: '#f03',
-            fillOpacity: 0.05,
-            dashArray: '10, 10' // EFECTO PUNTEADO SOLICITADO
-        }).addTo(map);
-
-
-        // 5. Generación de Marcadores
-        centrosVotacion.forEach(centro => {
-            // Creamos un marcador circular (más elegante que la chincheta)
-            var marker = L.circleMarker([centro.lat, centro.lng], {
-                radius: 8,
-                fillColor: "#007bff", // Azul electoral
-                color: "#fff",
-                weight: 2,
-                opacity: 1,
-                fillOpacity: 0.8
+            // Capa base: CartoDB Voyager (tonos suaves)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; CartoDB'
             }).addTo(map);
 
-            // Contenido del Popup
-            var popupContent = `
-                <h3>${centro.nombre}</h3>
-                <div class="stat-box">${centro.info}</div>
-            `;
+            // ---- Objeto global para funciones de botón ----
+            // (la función será llamada desde el popup con onclick)
+            window.verUbicacion = function(lat, lng) {
+                map.setView([lat, lng], 17);
+            };
 
-            marker.bindPopup(popupContent);
+            // ---- LÍMITE MUNICIPAL (polígono rojo punteado) ----
+            var limites = [
+                [10.209083747610128, -67.91127684975459], [10.206527525312698, -67.91100137490947], [10.212586321145846, -67.91235077093202],
+                [10.210432307328059, -67.91432487671563], [10.207560266215832, -67.91848766499842], [10.206926724180223, -67.91870224200103],
+                [10.203716758811204, -67.92265045356822], [10.200760182980076, -67.92685615735161], [10.196620930842732, -67.93252098276312],
+                [10.193664289241944, -67.93758499332628], [10.190876573404372, -67.94230568122039], [10.18694838706836, -67.95088875010374],
+                [10.186145848429986, -67.95526611510215], [10.185089873460145, -67.95462238495533], [10.181626251018136, -67.95402157015162],
+                [10.182133124944214, -67.94915067870731], [10.17997890518864, -67.9470263691435], [10.175923863770995, -67.94359314155811],
+                [10.170474820764458, -67.94067489813597], [10.169228708681796, -67.93762790864201], [10.167391212594463, -67.9358898372456],
+                [10.166271813215332, -67.93073999596662], [10.163821793308857, -67.92898046684334], [10.160484667153899, -67.92925941657364],
+                [10.160146728385515, -67.92923795890208], [10.159660940780196, -67.92934524725989], [10.159301879821893, -67.9291735858807],
+                [10.158668241994162, -67.9293452472532], [10.15769666155296, -67.92898046683666], [10.151465803720669, -67.92438852504281],
+                [10.150367470336896, -67.92419540595968], [10.149670449190307, -67.9238520832147], [10.147283668311443, -67.92357313348441],
+                [10.146671128756063, -67.92290794566601], [10.145319313110654, -67.92307960702512], [10.144453303255602, -67.92194235043239],
+                [10.144242080984439, -67.92119133192776], [10.143228212143553, -67.92022573670754], [10.14240444125379, -67.91996824455279],
+                [10.139743013431438, -67.91664230546085], [10.138813620729131, -67.9161273213434], [10.13756738526857, -67.91589128687696],
+                [10.137018195268585, -67.91623460962194], [10.136659108990484, -67.91632044030818], [10.135117145693535, -67.91769373128807],
+                [10.134652442971223, -67.91780101964588], [10.132709133378766, -67.91870224185143], [10.132624641390136, -67.91913139528265],
+                [10.131821966387527, -67.91975366775792], [10.131674104983656, -67.92037594023317], [10.130871427495572, -67.92046177093673],
+                [10.129329436360663, -67.92029010956423], [10.124154206364205, -67.92501079743494], [10.11847191893599, -67.92456018634948],
+                [10.112831779474227, -67.92466747473576], [10.111141830808938, -67.92507517049542], [10.110423599825694, -67.92509662812846],
+                [10.10894488414669, -67.9245172709963], [10.097727547870177, -67.92438852497811], [10.097009286944402, -67.92245733442823],
+                [10.098234554471412, -67.91996824452718], [10.096713532014665, -67.91318762031396], [10.094791118315447, -67.91084873397705],
+                [10.089594206205353, -67.90833818630618], [10.089742086976688, -67.89898264136218], [10.091854662016654, -67.89430486880227],
+                [10.092425054892002, -67.89147245615622], [10.094875620219776, -67.88831817831453], [10.097748673066574, -67.87486421798185],
+                [10.10093857666085, -67.87055122588646], [10.101530078479591, -67.87359821524811], [10.102882078551435, -67.87387716497838],
+                [10.10478331903489, -67.87439214909585], [10.106388802386748, -67.876666662403], [10.10607193133602, -67.87743913857919],
+                [10.106050806588208, -67.87840473379941], [10.106536675436853, -67.87941324436278], [10.110803839859535, -67.88147318083261],
+                [10.112578287678204, -67.88288938716065], [10.114268228786853, -67.88325416757718], [10.115049823542561, -67.88381206703777],
+                [10.11545118227256, -67.88473474691487], [10.125780716179223, -67.88821088978649], [10.126477789295363, -67.8873954982672],
+                [10.132286673090952, -67.88692342950569], [10.138095451677966, -67.88754570198432], [10.13970076825058, -67.88688051416592],
+                [10.13985622340783, -67.88271114431488], [10.136556941958062, -67.88109172405622], [10.135187977221667, -67.88153632702556],
+                [10.13501430119527, -67.88147661456705], [10.13489482509524, -67.88151751825346], [10.134475668250063, -67.88148600229877],
+                [10.133854304338376, -67.88210072417085], [10.133801741690949, -67.88160391249434], [10.131170911786635, -67.8818330992092],
+                [10.131747434419093, -67.87876426750812], [10.132765955206978, -67.87623423828646], [10.13395742826141, -67.87499655424858],
+                [10.135590892207327, -67.86487253304712], [10.136159720043874, -67.86420879080516], [10.137404988266423, -67.86483348935755],
+                [10.137454952644715, -67.86627810481001], [10.137720147984668, -67.86725810066623], [10.138304345647471, -67.86896821301113],
+                [10.139522701820036, -67.8704401590044], [10.140160703533864, -67.87332158113867], [10.140268318168603, -67.87343871215144],
+                [10.143085502293122, -67.87496531925564], [10.143669690197513, -67.87573838375748], [10.143654316850242, -67.87734698257864],
+                [10.144061710414604, -67.87952171447971], [10.14383495368455, -67.88052513653172], [10.143856984035997, -67.87997343025863],
+                [10.143907335104931, -67.880665384548], [10.14393530791991, -67.88112858188158], [10.143627606846776, -67.88147100690347],
+                [10.143321304121313, -67.88200950932371], [10.14217581325373, -67.88268299256256], [10.140124762287636, -67.88276875290505],
+                [10.139941799982186, -67.88601632895606], [10.140447440976354, -67.88633398987885], [10.141032919011279, -67.88629681679275],
+                [10.141575150555067, -67.88667530639668], [10.143774006538564, -67.88590818905898], [10.147757375760186, -67.88435834118235],
+                [10.147727437197162, -67.88382102111963], [10.148525797945956, -67.88377708926997], [10.149270932845052, -67.88285452083325],
+                [10.151813569927725, -67.88357091692073], [10.152927933689867, -67.88373650612702], [10.15302772728089, -67.88440224234823],
+                [10.153400289695341, -67.88541267441585], [10.155159975984638, -67.88469286828602], [10.156094701438466, -67.88471990325873],
+                [10.156304265840756, -67.88494970051825], [10.158030672146317, -67.88489563057949], [10.15830343686954, -67.8846387983437],
+                [10.159866839760781, -67.886848907362], [10.161224000329616, -67.88816686225584], [10.163213161541732, -67.88910632752992],
+                [10.164836414323368, -67.889471299648], [10.170477818974122, -67.89291825861989], [10.173245264086605, -67.89405372748949],
+                [10.176252172433573, -67.89435787091384], [10.17880003943691, -67.89397262255865], [10.18149423698287, -67.89389151763402],
+                [10.183290356039556, -67.89322916081724], [10.185126378399106, -67.89331026576653], [10.186097603347065, -67.89839959933771],
+                [10.18794691389124, -67.89951479191633], [10.191445939711665, -67.90015687249334], [10.197173349670685, -67.90369845386108],
+                [10.198596871149675, -67.90715893034303], [10.201058084848738, -67.90638167489952], [10.20519554172376, -67.90938931555779],
+                [10.206505946931202, -67.91099789644403], [10.209238540893097, -67.91129658143669]
+            ];
+            var limitePoly = L.polygon(limites, { color: '#d02b2b', weight: 3, dashArray: '8 8', fill: false, opacity: 0.9 }).addTo(map);
             
-            // Efecto al pasar el mouse (Hover)
-            marker.on('mouseover', function (e) {
-                this.openPopup();
+            // ---- RECOPILACIÓN DE DATOS POR CATEGORÍA ----
+            // 1. CENTROS DE VOTACIÓN 2024 (lista extensa del prompt)
+            const centrosVotacion = [
+                {lat: 10.17582273, lng: -67.93876326, nombre: "UNIDAD EDUCATIVA SANTISIMA TRINIDAD", info: "5 mesas y 4106 votantes"},
+                {lat: 10.18840028, lng: -67.93775610, nombre: "ESCUELA BASICA LICENCIADA ELISA GUEVARA DE CACERES", info: "3 mesas y 2751 votantes"},
+                {lat: 10.16353843, lng: -67.92732256, nombre: "JARDIN DE INFANCIA LAS AGUITAS", info: "4 mesas y 3079 votantes"},
+                {lat: 10.17300321, lng: -67.92346908, nombre: "INSTITUTO DE EDUCACION ESPECIAL LAS AGUITAS", info: "3 mesas 2411 votantes"},
+                {lat: 10.17026607, lng: -67.93051435, nombre: "LICEO NACIONAL BOLIVARIANO ANDRES BELLO", info: "6 mesas 5109 votantes"},
+                {lat: 10.17372458, lng: -67.93032729, nombre: "E.B.N. LAS AGUITAS I Y II JULIO GARMENDIA", info: "3 mesas y 2351 votantes"},
+                {lat: 10.18758100, lng: -67.93770326, nombre: "ANEXO RURAL 6", info: "4 mesas y 3062 votantes"},
+                {lat: 10.18775629, lng: -67.93962636, nombre: "MARIA FIDELA CHIRINOS", info: "2 mesas 1633 votantes"},
+                {lat: 10.18179363, lng: -67.93795482, nombre: "GRUPO ESCOLAR BATALLA DE AYACUCHO", info: "6 mesas y 5134 votantes"},
+                {lat: 10.17658373, lng: -67.93231285, nombre: "PRE-ESCOLAR BATALLA DE JUNIN", info: "6 mesas 5912 votantes"},
+                {lat: 10.15642914, lng: -67.91121757, nombre: "GRUPO ESCOLAR YORACO", info: "7 mesas y 6161 votantes"},
+                {lat: 10.11623263, lng: -67.89293778, nombre: "U.E. SIMON JOSE GUEDEZ ORTIZ", info: "2 mesas 10665 votantes"},
+                {lat: 10.13809854, lng: -67.89927120, nombre: "U.E. LICEO BOLIVARIANO LA GLORIETA", info: "1 mesa y 856 votantes"},
+                {lat: 10.10626986, lng: -67.89898139, nombre: "ESCUELA NACIONAL PIRITAL", info: "2 mesas y 1214 votos"},
+                {lat: 10.12010510, lng: -67.92210809, nombre: "JARDIN DE INFANCIA CABRIALES", info: "4 mesas y 3006 votantes"},
+                {lat: 10.16936349, lng: -67.90777085, nombre: "E.B.N.B. LOS CERRITOS", info: "5 mesas 4495 votantes"},
+                {lat: 10.10273061, lng: -67.90611509, nombre: "U.E. ESTADAL MARIA ESCAMILLO", info: "1 mesa 893 votantes"},
+                {lat: 10.17143589, lng: -67.92443324, nombre: "E.B.N.B. LAS AGUITAS III", info: "5 mesas 4381 votantes"},
+                {lat: 10.19276410, lng: -67.93257262, nombre: "UNIDAD BASICA RAMONA DE ROMERO", info: "3 mesas 2906 votantes"},
+                {lat: 10.16034137, lng: -67.89935852, nombre: "GRUPO ESCOLAR LOS HIJOS DE BOLIVAR", info: "3 mesas 2892 votantes"},
+                {lat: 10.16992284, lng: -67.90763180, nombre: "ESCUELA BOLIVARIANA LOS CERRITOS", info: "8 mesas 6933 votantes"},
+                {lat: 10.13534322, lng: -67.86886095, nombre: "U.E.B. RURAL LA DIOSA DE LOS TACARIGUAS", info: "1 mesa 755 votantes"},
+                {lat: 10.17934830, lng: -67.94041959, nombre: "U.E. ANTONIO JOSE DE SUCRE", info: "4 mesas y 3794 votantes"},
+                {lat: 10.16328418, lng: -67.90185788, nombre: "U.E. LUISA TERESA DE MONTEMAYOR", info: "4 mesas y 3238 votantes"},
+                {lat: 10.16632711, lng: -67.92017345, nombre: "ESCUELA BASICA ARTURO USLAR PIETRI", info: "3 mesas y 2320 votantes"},
+                {lat: 10.19089816, lng: -67.91675933, nombre: "PRE-ESCOLAR TACARIGUA I", info: "3 mesas y 2985 votantes"},
+                {lat: 10.16736417, lng: -67.92654609, nombre: "ESCUELA TECNOLOGICA RURAL FRANCISCO DE MIRANDA", info: "2 mesas y 1155 votantes"},
+                {lat: 10.19139831, lng: -67.93764334, nombre: "UNIDAD EDUCATIVA DIVINO NIÑO", info: "2 mesas y 1866 votantes"},
+                {lat: 10.16686521, lng: -67.91808436, nombre: "UNIDAD EDUCATIVA MANUELA SAENZ", info: "1 mesa y 993 votantes"},
+                {lat: 10.15669828, lng: -67.90803348, nombre: "JARDIN DE INFANCIA EL ROBLE", info: "3 mesas y 2117 votantes"},
+                {lat: 10.17438985, lng: -67.93102030, nombre: "ESCUELA DE ESPECIALIDADES FEMENINAS", info: "2 mesas y 1411 votantes"},
+                {lat: 10.18453270, lng: -67.93326067, nombre: "CENTRO EDUCACION INICIAL GUAPARO", info: "2 mesas y 1689 votantes"},
+                {lat: 10.10911423, lng: -67.92403439, nombre: "ESCUELA BOLIVARIANA NACIONAL LA UNION", info: "2 mesas y 1048 votantes"},
+                {lat: 10.17175085, lng: -67.92065388, nombre: "ESCUELA BASICA ESTADAL MIGUEL OTERO SILVA", info: "1 mesa y 815 votantes"},
+                {lat: 10.17811493, lng: -67.93635418, nombre: "UNIDAD EDUCATIVA VICENTE EMPARAN", info: "2 mesas 1349 votantes"},
+                {lat: 10.16440806, lng: -67.92468052, nombre: "MATERNAL PANCHITO MANDEFUA", info: "2 mesas y 1401 votantes"},
+                {lat: 10.17936477, lng: -67.90940662, nombre: "ESCUELA BASICA JUAN VICENTE GONZALEZ DELGADO", info: "2 mesas 1876 votantes"},
+                {lat: 10.18801352, lng: -67.93397279, nombre: "CENTRO EDUCACION INICIAL LIBERTADOR", info: "1 mesa y 869 votantes"},
+                {lat: 10.17358364, lng: -67.92323791, nombre: "ESCUELA DE NIÑOS ESPECIALES", info: "3 mesas y 2222 votantes"},
+                {lat: 10.15408739, lng: -67.90740000, nombre: "ESCUELA BASICA EL ROBLE", info: "1 mesa y 639 votantes"},
+                {lat: 10.16761002, lng: -67.90245191, nombre: "CENTRO DE VOTACION 23 DE ENERO", info: "2 mesas y 1223 votantes"},
+                {lat: 10.15170569, lng: -67.90905075, nombre: "CENTRO DE VOTACION 12 DE MARZO", info: "1 mesa y 580 votantes"},
+                {lat: 10.18120472, lng: -67.91641451, nombre: "BASE DE MISION SANTA ROSA- ALI PRIMERA", info: "1 mesa y 250 votantes"},
+                {lat: 10.17026611, lng: -67.93154597, nombre: "C.E.I. SIMONCITO ARAGUITA", info: "1 mesa y 351 votantes"},
+                {lat: 10.17666290, lng: -67.92452334, nombre: "PRE-ESCOLAR LA ALEGRIA", info: "1 mesa y 370 votantes"},
+                {lat: 10.18248855, lng: -67.91107779, nombre: "PRE-ESCOLAR ZAIDA CEDEÑO", info: "1 mesa y 457 votantes"}  // corregido longitud
+            ];
+
+            // 2. DEPORTE
+            const deporte = [
+                {lat:10.106494525210145, lng:-67.92012630646292, nombre:"Campo deportivo argimiro gabardon"},
+                {lat:10.105860565095638, lng:-67.92214717347639, nombre:"Cancha deportivo La unión"},
+                {lat:10.106518739821755, lng:-67.90630109327216, nombre:"Campo Deportivo el Charal (Campo de béisbol)"},
+                {lat:10.104874628084584, lng:-67.8946821909811, nombre:"Cancha de Pirital (baloncesto)"},
+                {lat:10.115009075413653, lng:-67.89261528140537, nombre:"Cancha Troncal 11"},
+                {lat:10.116135103852837, lng:-67.91948380257482, nombre:"Campo deportivo Alberto Martínez"},
+                {lat:10.116483398548901, lng:-67.91938529783592, nombre:"Cancha deportiva Cascabel"},
+                {lat:10.143038980311742, lng:-67.90106052952014, nombre:"Academia de béisbol G&G"},
+                {lat:10.137146960166234, lng:-67.8769174665642, nombre:"Cancha isla la culebra"},
+                {lat:10.156990448636332, lng:-67.91467035060006, nombre:"Cancha 3 de mayo"},
+                {lat:10.162530835221428, lng:-67.91698963696683, nombre:"Campo de béisbol Enrrique Marquez"},
+                {lat:10.162016002543654, lng:-67.92820063193275, nombre:"Cancha las agüitas sector 6"},
+                {lat:10.162393125611912, lng:-67.92344433904316, nombre:"Cancha Aguitas sector 5"},
+                {lat:10.162043589488297, lng:-67.92822928883692, nombre:"Cancha Romulo Gallegos"},
+                {lat:10.176251220383968, lng:-67.89773916501133, nombre:"Academia de Taekwondo Lum Fatt"},
+                {lat:10.176208470055267, lng:-67.89789014841733, nombre:"Cancha Buena ventura"}
+            ];
+
+            // 3. SALUD
+            const salud = [
+                {lat:10.184735716198, lng:-67.9160520532341, nombre:"Seguro Social de Paraparal"}
+            ];
+
+            // 4. AGRICULTURA
+            const agricultura = [
+                {lat:10.12305230189021, lng:-67.9000093398857, nombre:"Hacienda El Olivo (Cooperativa)"},
+                {lat:10.101586292193456, lng:-67.91452716791642, nombre:"Zona de cultivo la Union"},
+                {lat:10.099774362163824, lng:-67.88998776353333, nombre:"Zona de cultivo Pirital"},
+                {lat:10.104746401899796, lng:-67.89400535571667, nombre:"Hacienda familia Bericoto"},
+                {lat:10.108969735385202, lng:-67.88670164572545, nombre:"Zona de cultivo orilla lago pirital"},
+                {lat:10.136491265248768, lng:-67.91573137211373, nombre:"GP GRANJA PORCINA"},
+                {lat:10.132614601141881, lng:-67.8810274687416, nombre:"Finca La Vegareña"},
+                {lat:10.142299119004067, lng:-67.88037754409099, nombre:"Zona de cultivo la culebra"},
+                {lat:10.133737695489652, lng:-67.9055094098112, nombre:"Zona potencial de cultivo la culebra"},
+                {lat:10.141541606559212, lng:-67.9038019678467, nombre:"Zona de cultivo la glorieta"},
+                {lat:10.158275692090216, lng:-67.89498081513577, nombre:"Hacienda Delgado"}
+            ];
+
+            // 5. INSTITUCIONES EDUCATIVAS (lista limpia, corregida)
+            const educativas = [
+                {lat:10.17582273, lng:-67.93876326, nombre:"UNIDAD EDUCATIVA SANTISIMA TRINIDAD"},
+                {lat:10.18840028, lng:-67.93775610, nombre:"ESCUELA BASICA LICENCIADA ELISA GUEVARA DE CACERES"},
+                {lat:10.16353843, lng:-67.92732256, nombre:"JARDIN DE INFANCIA LAS AGUITAS"},
+                {lat:10.17300321, lng:-67.92346908, nombre:"INSTITUTO DE EDUCACION ESPECIAL LAS AGUITAS"},
+                {lat:10.17026607, lng:-67.93051435, nombre:"LICEO NACIONAL BOLIVARIANO ANDRES BELLO"},
+                {lat:10.17372458, lng:-67.93032729, nombre:"E.B.N. LAS AGUITAS I Y II JULIO GARMENDIA"},
+                {lat:10.18758100, lng:-67.93770326, nombre:"ANEXO RURAL 6"},
+                {lat:10.18775629, lng:-67.93962636, nombre:"MARIA FIDELA CHIRINOS"},
+                {lat:10.18179363, lng:-67.93795482, nombre:"GRUPO ESCOLAR BATALLA DE AYACUCHO"},
+                {lat:10.17658373, lng:-67.93231285, nombre:"PRE-ESCOLAR BATALLA DE JUNIN"},
+                {lat:10.15642914, lng:-67.91121757, nombre:"GRUPO ESCOLAR YORACO"},
+                {lat:10.11623263, lng:-67.89293778, nombre:"U.E. SIMON JOSE GUEDEZ ORTIZ"},
+                {lat:10.13809854, lng:-67.89927120, nombre:"U.E. LICEO BOLIVARIANO LA GLORIETA"},
+                {lat:10.10626986, lng:-67.89898139, nombre:"ESCUELA NACIONAL PIRITAL"},
+                {lat:10.12010510, lng:-67.92210809, nombre:"JARDIN DE INFANCIA CABRIALES"},
+                {lat:10.16936349, lng:-67.90777085, nombre:"E.B.N.B. LOS CERRITOS"},
+                {lat:10.10273061, lng:-67.90611509, nombre:"U.E. ESTADAL MARIA ESCAMILLO"},
+                {lat:10.17143589, lng:-67.92443324, nombre:"E.B.N.B. LAS AGUITAS III"},
+                {lat:10.19276410, lng:-67.93257262, nombre:"UNIDAD BASICA RAMONA DE ROMERO"},
+                {lat:10.16034137, lng:-67.89935852, nombre:"GRUPO ESCOLAR LOS HIJOS DE BOLIVAR"},
+                {lat:10.16992284, lng:-67.90763180, nombre:"ESCUELA BOLIVARIANA LOS CERRITOS"},
+                {lat:10.13534322, lng:-67.86886095, nombre:"U.E.B. RURAL LA DIOSA DE LOS TACARIGUAS"},
+                {lat:10.17934830, lng:-67.94041959, nombre:"U.E. ANTONIO JOSE DE SUCRE"},
+                {lat:10.16328418, lng:-67.90185788, nombre:"U.E. LUISA TERESA DE MONTEMAYOR"},
+                {lat:10.16632711, lng:-67.92017345, nombre:"ESCUELA BASICA ARTURO USLAR PIETRI"},
+                {lat:10.19089816, lng:-67.91675933, nombre:"PRE-ESCOLAR TACARIGUA I"},
+                {lat:10.16736417, lng:-67.92654609, nombre:"ESCUELA TECNOLOGICA RURAL FRANCISCO DE MIRANDA"},
+                {lat:10.19139831, lng:-67.93764334, nombre:"UNIDAD EDUCATIVA DIVINO NIÑO"},
+                {lat:10.16686521, lng:-67.91808436, nombre:"UNIDAD EDUCATIVA MANUELA SAENZ"},
+                {lat:10.15669828, lng:-67.90803348, nombre:"JARDIN DE INFANCIA EL ROBLE"},
+                {lat:10.17438985, lng:-67.93102030, nombre:"ESCUELA DE ESPECIALIDADES FEMENINAS"},
+                {lat:10.18453270, lng:-67.93326067, nombre:"CENTRO EDUCACION INICIAL GUAPARO"},
+                {lat:10.10911423, lng:-67.92403439, nombre:"ESCUELA BOLIVARIANA NACIONAL LA UNION"},
+                {lat:10.17175085, lng:-67.92065388, nombre:"ESCUELA BASICA ESTADAL MIGUEL OTERO SILVA"},
+                {lat:10.17811493, lng:-67.93635418, nombre:"UNIDAD EDUCATIVA VICENTE EMPARAN"},
+                {lat:10.16440806, lng:-67.92468052, nombre:"MATERNAL PANCHITO MANDEFUA"},
+                {lat:10.17936477, lng:-67.90940662, nombre:"ESCUELA BASICA JUAN VICENTE GONZALEZ DELGADO"},
+                {lat:10.18801352, lng:-67.93397279, nombre:"CENTRO EDUCACION INICIAL LIBERTADOR"},
+                {lat:10.17358364, lng:-67.92323791, nombre:"ESCUELA DE NIÑOS ESPECIALES"},
+                {lat:10.15408739, lng:-67.90740000, nombre:"ESCUELA BASICA EL ROBLE"},
+                {lat:10.16761002, lng:-67.90245191, nombre:"CENTRO DE VOTACION 23 DE ENERO"},
+                {lat:10.15170569, lng:-67.90905075, nombre:"CENTRO DE VOTACION 12 DE MARZO"},
+                {lat:10.18120472, lng:-67.91641451, nombre:"BASE DE MISION SANTA ROSA- ALI PRIMERA"},
+                {lat:10.17026611, lng:-67.93154597, nombre:"C.E.I. SIMONCITO ARAGUITA"},
+                {lat:10.17666290, lng:-67.92452334, nombre:"PRE-ESCOLAR LA ALEGRIA"},
+                {lat:10.18248855, lng:-67.91107779, nombre:"PRE-ESCOLAR ZAIDA CEDEÑO"}
+            ];
+
+            // 6. TURISMO
+            const turismo = [
+                {lat:10.107459521786417, lng:-67.90362334258398, nombre:"Tanque de agua del Charal"},
+                {lat:10.193917531999569, lng:-67.90312508538702, nombre:"Pozo de Manolo (Lugar histórico)"},
+                {lat:10.122651677672904, lng:-67.8931221102911, nombre:"Puente Samán Mocho / Qda. Bucaral"},
+                {lat:10.117876426598874, lng:-67.92429586630567, nombre:"Estatua de José Gregorio Hernández"},
+                {lat:10.138565601941455, lng:-67.87497501472926, nombre:"Isla La Culebra (senderismo)"},
+                {lat:10.154550987350868, lng:-67.90653005152592, nombre:"Parque El Roble"},
+                {lat:10.158284592423664, lng:-67.9142693515971, nombre:"Plaza del Roble"}
+            ];
+
+            // ---- FUNCIÓN PARA CREAR MARCADORES CON COLOR Y POPUP ----
+            function crearGrupoMarcadores(datos, color, categoria) {
+                const grupo = L.featureGroup();
+                datos.forEach(item => {
+                    // descripción adicional si existe (para votación)
+                    let descripcion = item.info ? `<br><small>${item.info}</small>` : '';
+                    let popupContent = `
+                        <b>${item.nombre}</b>${descripcion}
+                        <br><span style="background:${color}; padding:2px 8px; border-radius:12px; color:white; font-size:0.7rem;">${categoria}</span>
+                        <button class="btn-ubicacion" onclick="verUbicacion(${item.lat}, ${item.lng})">📍 Ver ubicación</button>
+                    `;
+                    let marker = L.circleMarker([item.lat, item.lng], {
+                        radius: 8,
+                        fillColor: color,
+                        color: '#fff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    }).bindPopup(popupContent);
+                    grupo.addLayer(marker);
+                });
+                return grupo;
+            }
+
+            // Crear grupos por categoría
+            const grupoVotacion = crearGrupoMarcadores(centrosVotacion, '#d42e2e', 'Votación 2024');
+            const grupoDeporte = crearGrupoMarcadores(deporte, '#1f77b4', 'Deporte');
+            const grupoSalud = crearGrupoMarcadores(salud, '#c9a03d', 'Salud');
+            const grupoAgricultura = crearGrupoMarcadores(agricultura, '#2e8b57', 'Agricultura');
+            const grupoEducacion = crearGrupoMarcadores(educativas, '#9467bd', 'Educativa');
+            const grupoTurismo = crearGrupoMarcadores(turismo, '#ff8c42', 'Turismo');
+
+            // Añadir capas al mapa (por defecto todas visibles, se pueden desactivar)
+            grupoVotacion.addTo(map);
+            grupoDeporte.addTo(map);
+            grupoSalud.addTo(map);
+            grupoAgricultura.addTo(map);
+            grupoEducacion.addTo(map);
+            grupoTurismo.addTo(map);
+
+            // Control de capas para alternar
+            const overlays = {
+                "🗳️ Centros de Votación 2024": grupoVotacion,
+                "⚽ Deporte": grupoDeporte,
+                "🏥 Salud": grupoSalud,
+                "🌽 Agricultura": grupoAgricultura,
+                "📚 Instituciones Educativas": grupoEducacion,
+                "🏞️ Turismo": grupoTurismo,
+                "🚩 Límite municipal (rojo)": limitePoly
+            };
+            L.control.layers(null, overlays, { collapsed: false }).addTo(map);
+
+            // Ajustar para que el panel no tape el control de capas en móvil
+            map.on('load', function() {
+                // pequeño respiro
             });
-        });
-
-        // Ajustar el mapa para que se vean todos los puntos automáticamente
-        var group = new L.featureGroup(centrosVotacion.map(c => L.marker([c.lat, c.lng])));
-        map.fitBounds(group.getBounds().pad(0.1));
-
+        })();
     </script>
 </body>
 </html>
