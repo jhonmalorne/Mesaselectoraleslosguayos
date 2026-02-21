@@ -31,28 +31,56 @@
             left: 0;
             z-index: 1;
         }
-        /* Panel de identidad (compacto y semitransparente, no interfiere) */
+        /* Panel superior desplegable */
         .brand-panel {
             position: absolute;
             top: 12px;
             left: 12px;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(6px);
-            border-radius: 40px 15px 40px 15px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 50px 20px 50px 20px;
             box-shadow: 0 6px 16px rgba(0, 40, 0, 0.4);
-            padding: 6px 16px 6px 12px;
+            padding: 8px 16px 8px 12px;
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
             gap: 8px;
             border-left: 5px solid #c5342a;
             border-right: 3px solid #f0b84d;
-            pointer-events: none;
+            transition: all 0.3s ease;
             max-width: 95%;
+            pointer-events: none;
         }
         .brand-panel * {
             pointer-events: auto;
+        }
+        .brand-panel.collapsed {
+            padding: 8px;
+            border-radius: 40px;
+        }
+        .brand-panel.collapsed .escudo-simbolo,
+        .brand-panel.collapsed .text-logo,
+        .brand-panel.collapsed .baldwyn,
+        .brand-panel.collapsed .fecha-union {
+            display: none;
+        }
+        .brand-panel .toggle-btn {
+            background: #002c47;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: 0.2s;
+        }
+        .brand-panel .toggle-btn:hover {
+            background: #0f3a5a;
         }
         .escudo-simbolo {
             background: #002c47;
@@ -127,12 +155,43 @@
             color: #b37b2e;
             margin-right: 4px;
         }
-        /* Botón de descarga */
-        .download-btn {
+        /* Botones de capa base (inferior izquierda) */
+        .base-buttons {
             position: absolute;
             bottom: 25px;
-            right: 20px;
+            left: 20px;
             z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .base-btn {
+            background: white;
+            border: 2px solid #c49b3f;
+            border-radius: 40px;
+            padding: 10px 18px;
+            font-weight: bold;
+            color: #1d4e2b;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.9);
+        }
+        .base-btn.active {
+            background: #1d4e2b;
+            color: white;
+            border-color: #f0b84d;
+        }
+        .base-btn i {
+            font-size: 1.1rem;
+        }
+        /* Botón de descarga (junto a botones base) */
+        .download-btn {
             background: #174027;
             color: white;
             border: none;
@@ -148,43 +207,24 @@
             border-bottom: 4px solid #d6a741;
             transition: 0.2s;
             backdrop-filter: blur(2px);
+            margin-top: 10px;
         }
         .download-btn:hover {
             background: #0c2d1a;
             border-bottom-color: #b88b2c;
             transform: scale(1.02);
         }
-        .download-btn i {
-            font-size: 1.3rem;
-        }
-        /* Leyenda compacta */
-        .legend-mini {
-            position: absolute;
-            bottom: 100px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(0,0,0,0.75);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            backdrop-filter: blur(4px);
-            border-left: 5px solid #e3b13c;
-            pointer-events: none;
-            box-shadow: 0 4px 10px black;
-        }
-        .legend-mini span {
-            display: inline-block;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            margin-right: 4px;
-        }
-        /* Ajustes para controles Leaflet */
+        /* Control de capas (Leaflet) lo posicionamos en bottomright */
         .leaflet-control-layers {
             border-radius: 20px !important;
             border: 2px solid #c49b3f !important;
-            background: rgba(255,255,255,0.9) !important;
+            background: rgba(255,255,255,0.95) !important;
+            box-shadow: 0 4px 12px black !important;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .leaflet-control-layers label {
+            font-weight: 500;
         }
         .leaflet-control-zoom {
             border: 2px solid #b38830 !important;
@@ -215,26 +255,24 @@
         .btn-google-maps:hover {
             background: #12452b;
         }
-        /* Responsive: ajustes para móvil */
+        /* Responsive */
         @media (max-width: 700px) {
-            .brand-panel { padding: 5px 10px; gap: 5px; }
-            .escudo-simbolo { width: 40px; height: 40px; font-size: 8px; }
-            .text-logo .municipio { font-size: 1rem; }
-            .baldwyn { padding: 3px 10px; font-size: 0.8rem; }
-            .fecha-union { padding: 3px 8px; font-size: 0.65rem; }
-            .download-btn { padding: 8px 16px; font-size: 0.9rem; bottom: 15px; right: 10px; }
-            .legend-mini { bottom: 85px; right: 10px; font-size: 0.7rem; }
+            .base-buttons { bottom: 15px; left: 10px; }
+            .base-btn { padding: 8px 14px; font-size: 0.8rem; }
+            .download-btn { padding: 8px 16px; font-size: 0.9rem; }
+            .brand-panel .toggle-btn { width: 32px; height: 32px; }
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
 
-    <!-- Panel de marca basado en las imágenes proporcionadas -->
-    <div class="brand-panel">
+    <!-- Panel superior desplegable -->
+    <div class="brand-panel" id="brandPanel">
+        <button class="toggle-btn" id="toggleBrandBtn"><i class="fas fa-chevron-up"></i></button>
         <div class="escudo-simbolo">
             <i class="fas fa-crown"></i>
-            <span>1·3 JUN<br>2024-2026</span>
+            <span>1·3 JUN<br>2020-2021</span>
         </div>
         <div class="text-logo">
             <div class="municipio">LOS GUAYOS <small>Carabobo</small></div>
@@ -244,25 +282,18 @@
             <i class="fas fa-map-signal"></i> BALDWYN MUJICA
         </div>
         <div class="fecha-union">
-            <i class="fas fa-handshake"></i> ORDEN Y GESTIÓN
+            <i class="fas fa-handshake"></i> UNIÓN Y PROSPERIDAD
         </div>
     </div>
 
-    <!-- Botón descargar mapa con marca de agua -->
-    <button class="download-btn" id="downloadMapBtn">
-        <i class="fas fa-download"></i> <span>Descargar mapa</span>
-    </button>
-
-    <!-- Mini leyenda de colores -->
-    <div class="legend-mini">
-        <b style="display:block; margin-bottom:4px;">🗂️ categorías</b>
-        <div><span style="background:#d42e2e;"></span> Votación 2024</div>
-        <div><span style="background:#1f77b4;"></span> Deporte</div>
-        <div><span style="background:#c9a03d;"></span> Salud</div>
-        <div><span style="background:#2e8b57;"></span> Agricultura</div>
-        <div><span style="background:#9467bd;"></span> Educación</div>
-        <div><span style="background:#ff8c42;"></span> Turismo</div>
-        <div><span style="background:black; width:14px; height:2px; border-radius:0;"></span> Límite mpal.</div>
+    <!-- Botones de capa base (inferior izquierda) -->
+    <div class="base-buttons">
+        <button id="btnCalle" class="base-btn active"><i class="fas fa-map"></i> Vista calle</button>
+        <button id="btnSatelite" class="base-btn"><i class="fas fa-satellite"></i> Satélite</button>
+        <!-- Botón de descarga integrado aquí -->
+        <button class="download-btn" id="downloadMapBtn">
+            <i class="fas fa-download"></i> <span>Descargar mapa</span>
+        </button>
     </div>
 
     <script>
@@ -275,7 +306,7 @@
                 attributionControl: true
             });
 
-            // Añadir control de zoom en la esquina inferior izquierda para liberar arriba
+            // Control de zoom en la esquina inferior izquierda (arriba de los botones)
             L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
             // Capas base
@@ -289,12 +320,21 @@
 
             capaCalles.addTo(map);  // por defecto
 
-            // Control de capas base en la esquina superior derecha (para no interferir con el logo)
-            const baseMaps = {
-                "🗺️ Vista calle": capaCalles,
-                "🛰️ Satélite": capaSatelite
-            };
-            L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+            // Botones de cambio de capa base
+            const btnCalle = document.getElementById('btnCalle');
+            const btnSatelite = document.getElementById('btnSatelite');
+
+            function setBaseLayer(activo, inactivo, layer) {
+                map.eachLayer((l) => {
+                    if (l instanceof L.TileLayer) map.removeLayer(l);
+                });
+                layer.addTo(map);
+                activo.classList.add('active');
+                inactivo.classList.remove('active');
+            }
+
+            btnCalle.addEventListener('click', () => setBaseLayer(btnCalle, btnSatelite, capaCalles));
+            btnSatelite.addEventListener('click', () => setBaseLayer(btnSatelite, btnCalle, capaSatelite));
 
             // ---------- FUNCIÓN PARA BOTÓN "VER EN GOOGLE MAPS" ----------
             window.abrirGoogleMaps = function(lat, lng) {
@@ -304,7 +344,7 @@
 
             // ---------- DATOS COMPLETOS (corregidos y aumentados) ----------
 
-            // 1. CENTROS DE VOTACIÓN 2024 (con info de mesas)
+            // 1. CENTROS DE VOTACIÓN 2024
             const centrosVotacion = [
                 {lat: 10.17582273, lng: -67.93876326, nombre: "UNIDAD EDUCATIVA SANTISIMA TRINIDAD", info: "5 mesas y 4106 votantes"},
                 {lat: 10.18840028, lng: -67.93775610, nombre: "ESCUELA BASICA LICENCIADA ELISA GUEVARA DE CACERES", info: "3 mesas y 2751 votantes"},
@@ -351,10 +391,10 @@
                 {lat: 10.18120472, lng: -67.91641451, nombre: "BASE DE MISION SANTA ROSA- ALI PRIMERA", info: "1 mesa y 250 votantes"},
                 {lat: 10.17026611, lng: -67.93154597, nombre: "C.E.I. SIMONCITO ARAGUITA", info: "1 mesa y 351 votantes"},
                 {lat: 10.17666290, lng: -67.92452334, nombre: "PRE-ESCOLAR LA ALEGRIA", info: "1 mesa y 370 votantes"},
-                {lat: 10.18248855, lng: -67.91107779, nombre: "PRE-ESCOLAR ZAIDA CEDEÑO", info: "1 mesa y 457 votantes"}  // longitud corregida
+                {lat: 10.18248855, lng: -67.91107779, nombre: "PRE-ESCOLAR ZAIDA CEDEÑO", info: "1 mesa y 457 votantes"}
             ];
 
-            // 2. DEPORTE (incluye los nuevos puntos)
+            // 2. DEPORTE (con nuevos puntos)
             const deporte = [
                 {lat:10.106494525210145, lng:-67.92012630646292, nombre:"Campo deportivo argimiro gabardon"},
                 {lat:10.105860565095638, lng:-67.92214717347639, nombre:"Cancha deportivo La unión"},
@@ -377,7 +417,7 @@
                 {lat:10.169439990818963, lng:-67.90892383894932, nombre:"Cancha Bascket Paraparal"}
             ];
 
-            // 3. SALUD (incluye los nuevos puntos)
+            // 3. SALUD
             const salud = [
                 {lat:10.184735716198, lng:-67.9160520532341, nombre:"Seguro Social de Paraparal"},
                 {lat:10.185938587050927, lng:-67.91953485477745, nombre:"CDI Paraparal"},
@@ -400,7 +440,7 @@
                 {lat:10.158275692090216, lng:-67.89498081513577, nombre:"Hacienda Delgado"}
             ];
 
-            // 5. INSTITUCIONES EDUCATIVAS (corregidas: todas con longitud negativa)
+            // 5. INSTITUCIONES EDUCATIVAS (corregidas)
             const educativas = [
                 {lat:10.17582273, lng:-67.93876326, nombre:"UNIDAD EDUCATIVA SANTISIMA TRINIDAD"},
                 {lat:10.18840028, lng:-67.93775610, nombre:"ESCUELA BASICA LICENCIADA ELISA GUEVARA DE CACERES"},
@@ -543,7 +583,7 @@
                 return grupo;
             }
 
-            // Crear grupos por categoría con colores distintivos
+            // Crear grupos por categoría
             const grupoVotacion = crearGrupoMarcadores(centrosVotacion, '#d42e2e', 'Votación 2024');
             const grupoDeporte = crearGrupoMarcadores(deporte, '#1f77b4', 'Deporte');
             const grupoSalud = crearGrupoMarcadores(salud, '#c9a03d', 'Salud');
@@ -559,7 +599,7 @@
             grupoEducacion.addTo(map);
             grupoTurismo.addTo(map);
 
-            // Control de capas superpuestas (para ocultar/mostrar categorías)
+            // Control de capas superpuestas (solo overlays) en la parte inferior derecha
             const overlays = {
                 "🗳️ Votación 2024": grupoVotacion,
                 "⚽ Deporte": grupoDeporte,
@@ -569,7 +609,7 @@
                 "🏞️ Turismo": grupoTurismo,
                 "🚩 Límite municipal": limitePoly
             };
-            L.control.layers(null, overlays, { collapsed: true, position: 'topright' }).addTo(map);
+            L.control.layers(null, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
 
             // ---------- FUNCIÓN DE DESCARGA DEL MAPA CON MARCA DE AGUA ----------
             document.getElementById('downloadMapBtn').addEventListener('click', function() {
@@ -623,6 +663,21 @@
                 });
             });
 
+            // ---------- Toggle panel superior ----------
+            const brandPanel = document.getElementById('brandPanel');
+            const toggleBtn = document.getElementById('toggleBrandBtn');
+            let panelCollapsed = false;
+            toggleBtn.addEventListener('click', () => {
+                brandPanel.classList.toggle('collapsed');
+                const icon = toggleBtn.querySelector('i');
+                if (brandPanel.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                } else {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                }
+            });
         })();
     </script>
 </body>
